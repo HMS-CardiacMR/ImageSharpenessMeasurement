@@ -1,7 +1,7 @@
 
 # Image Sharpness Measurement Program for Cardiac MRI
 
-The repository contains a source code for measuring image sharpenss. Image sharpeness is defined as the abosolute gradient of intensity profile extracted from normalized image.
+The repository contains a source code for measuring image sharpness. Image sharpness is defined as the absolute gradient of intensity profile extracted from the normalized image.
 
 
 ## Requirements
