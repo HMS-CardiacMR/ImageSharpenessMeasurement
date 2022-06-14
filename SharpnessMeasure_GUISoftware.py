@@ -16,7 +16,7 @@ import scipy.ndimage
 
 import sys
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, qApp,QMenuBar, QShortcut,QButtonGroup, QRadioButton, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, qApp,QMenuBar, QShortcut,QButtonGroup, QRadioButton, QPushButton, QComboBox
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout,QHBoxLayout,QWidget,QSlider,QLabel
 from PyQt5.QtGui import QPixmap, QPalette
 from PyQt5 import QtCore
@@ -66,9 +66,14 @@ class MainWindow(QMainWindow):
         self.RadioPhases = QVBoxLayout()
         self.RadioPhases.setAlignment(Qt.AlignCenter)
 
+        self.ComboLinesBOX = QVBoxLayout()
+        self.ComboLinesBOX.setAlignment(Qt.AlignCenter)
+
+
         self.RadioLayout.addLayout(self.RadioViews)
         self.RadioLayout.addLayout(self.RadioSlices)
         self.RadioLayout.addLayout(self.RadioPhases)
+        self.RadioLayout.addLayout(self.ComboLinesBOX)
 
         self.ImagesLayout = QHBoxLayout()
         self.ImagesLayout.setAlignment(Qt.AlignCenter)
@@ -131,6 +136,11 @@ class MainWindow(QMainWindow):
         self.PhaseName = ['EndDiastole', 'EndSystole']
         self.radioEndDiastole = QRadioButton("EndDiastole", self)
         self.radioEndSystole = QRadioButton("EndSystole ", self)
+
+        self.LineName = ['Center','1st', '2nd', '3rd', '4th', '5th', '6th']
+        self.comboLines=QComboBox(self)
+        self.comboLines.addItems(self.LineName)
+
 
 
 
@@ -206,6 +216,10 @@ class MainWindow(QMainWindow):
         self.radioEndDiastole.toggled.connect(self.updatePhaseMode)
         self.radioEndSystole.toggled.connect(self.updatePhaseMode)
 
+
+        self.ComboLinesBOX.addWidget(self.comboLines)
+        self.comboLines.currentIndexChanged.connect(self.updateLineSelection)
+
         self.sliceSlider.setOrientation(QtCore.Qt.Horizontal)
         self.sliceSlider.setTickInterval(1)
         self.sliceSlider.setTickPosition(QSlider.TicksBelow)
@@ -240,7 +254,7 @@ class MainWindow(QMainWindow):
 
         self.filemenu.addAction(self.exitAction)
 
-        img1 = Image.new('RGB', self.dispay_dim, color=(255, 0, 0))
+        img1 = Image.new('RGB', self.dispay_dim, color=(0, 0, 0))
         img1 = np.array(img1)
         img1 = qimage2ndarray.array2qimage(img1)
 
@@ -277,6 +291,22 @@ class MainWindow(QMainWindow):
         elif 'sys' in phasestr:
             self.PhaseMode = 1
 
+    def updateLineSelection(self):
+        linestr = self.comboLines.currentText()
+        if 'Center' in linestr:
+            self.ModeSelection_center()
+        elif '1st' in linestr:
+            self.ModeSelection_line1()
+        elif '2nd' in linestr:
+            self.ModeSelection_line2()
+        elif '3rd' in linestr:
+            self.ModeSelection_line3()
+        elif '4th' in linestr:
+            self.ModeSelection_line4()
+        elif '5th' in linestr:
+            self.ModeSelection_line5()
+        elif '6th' in linestr:
+            self.ModeSelection_line6()
 
 
     def updateLabels(self):
@@ -413,29 +443,39 @@ class MainWindow(QMainWindow):
     def ModeSelection_center(self):
         self.drawingMode=0
         self.center_selected = False
+        self.comboLines.setCurrentIndex(0)
 
     def ModeSelection_line1(self):
         self.drawingMode=1
         self.line_selected[self.drawingMode-1] = False
+        self.comboLines.setCurrentIndex(1)
+
     def ModeSelection_line2(self):
         self.drawingMode=2
         self.line_selected[self.drawingMode-1] = False
+        self.comboLines.setCurrentIndex(2)
+
 
     def ModeSelection_line3(self):
         self.drawingMode=3
         self.line_selected[self.drawingMode-1] = False
+        self.comboLines.setCurrentIndex(3)
 
     def ModeSelection_line4(self):
         self.drawingMode=4
         self.line_selected[self.drawingMode-1] = False
+        self.comboLines.setCurrentIndex(4)
+
     def ModeSelection_line5(self):
         self.drawingMode=5
         self.line_selected[self.drawingMode-1] = False
 
+        self.comboLines.setCurrentIndex(5)
+
     def ModeSelection_line6(self):
         self.drawingMode=6
         self.line_selected[self.drawingMode-1] = False
-
+        self.comboLines.setCurrentIndex(6)
 
 
 
@@ -505,21 +545,22 @@ class MainWindow(QMainWindow):
             axes[1, 2].plot(grad[5], 'r')
             axes[1, 2].plot(minGradIdx[5], minGrad[5], 'go')
 
-
-            fig.savefig('Figure_'+self.ViewName[self.ViewMode]+'_'+self.SliceName[self.SliceMode]+'_'+self.PhaseName[self.PhaseMode]+'.png')
+            FigureName = "Figure_" + self.caseID +"_"+ self.ViewName[self.ViewMode] + '_' + self.SliceName[
+                self.SliceMode] + '_' + self.PhaseName[self.PhaseMode]
+            fig.savefig(FigureName+'.png')
 
             logline = self.caseID  + ' '  + self.ViewName[self.ViewMode] + ' ' + self.SliceName[
                 self.SliceMode] + ' ' + self.PhaseName[self.PhaseMode] + ' ' + \
-                      str(minGrad[0]) + ' ' + str(minGrad[1]) + ' ' + str(minGrad[2]) + ' ' + str(
-                minGrad[3]) + ' ' + str(minGrad[4]) + ' ' + str(minGrad[5]) + '\n'
+                      str(abs(minGrad[0])) + ' ' + str(abs(minGrad[1])) + ' ' + str(abs(minGrad[2])) + ' ' + str(
+                abs(minGrad[3])) + ' ' + str(abs(minGrad[4])) + ' ' + str(abs(minGrad[5])) + '\n'
 
             AllogFile = open('ImageSharpness.txt', "a")
             AllogFile.write(logline)
             AllogFile.close()
 
             for co in range(0, 6):
-                FileName = "Profile_" +self.caseID +  self.ViewName[self.ViewMode] + '_' + self.SliceName[
-                    self.SliceMode] + '_' + self.PhaseName[self.PhaseMode] + str(co) + '.txt'
+                FileName = "Profile_" +self.caseID + "_"+ self.ViewName[self.ViewMode] + '_' + self.SliceName[
+                    self.SliceMode] + '_' + self.PhaseName[self.PhaseMode] + str(co+1) + '.txt'
                 np.savetxt(FileName, Profile[co])
 
 
@@ -527,7 +568,7 @@ class MainWindow(QMainWindow):
 
     def SaveResult_xtprofile(self):
         img1 = np.array(self.ndImage[0][self.sliceSlider.value(), :, self.ptCenter[1] // 4, :])
-        FileName = "Profile_" + self.caseID + self.ViewName[self.ViewMode] + '_' + self.SliceName[
+        FileName = "X-t plot_" + self.caseID + "_"+self.ViewName[self.ViewMode] + '_' + self.SliceName[
             self.SliceMode] + '_' + self.PhaseName[self.PhaseMode]
         plt.imsave( FileName+ '.png', img1, cmap='gray')
 
