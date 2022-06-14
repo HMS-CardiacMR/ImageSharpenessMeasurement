@@ -508,10 +508,10 @@ class MainWindow(QMainWindow):
 
             fig.savefig('Figure_'+self.ViewName[self.ViewMode]+'_'+self.SliceName[self.SliceMode]+'_'+self.PhaseName[self.PhaseMode]+'.png')
 
-            logline = self.caseID  + '@' + self.ViewName[self.ViewMode] + '@' + self.SliceName[
-                self.SliceMode] + '@' + self.PhaseName[self.PhaseMode] + '@' + \
-                      str(minGrad[0]) + '@' + str(minGrad[1]) + '@' + str(minGrad[2]) + '@' + str(
-                minGrad[3]) + '@' + str(minGrad[4]) + '@' + str(minGrad[5]) + '\n'
+            logline = self.caseID  + ' '  + self.ViewName[self.ViewMode] + ' ' + self.SliceName[
+                self.SliceMode] + ' ' + self.PhaseName[self.PhaseMode] + ' ' + \
+                      str(minGrad[0]) + ' ' + str(minGrad[1]) + ' ' + str(minGrad[2]) + ' ' + str(
+                minGrad[3]) + ' ' + str(minGrad[4]) + ' ' + str(minGrad[5]) + '\n'
 
             AllogFile = open('ImageSharpness.txt', "a")
             AllogFile.write(logline)
@@ -527,7 +527,9 @@ class MainWindow(QMainWindow):
 
     def SaveResult_xtprofile(self):
         img1 = np.array(self.ndImage[0][self.sliceSlider.value(), :, self.ptCenter[1] // 4, :])
-        plt.imsave( str(self.sliceSlider.value()) + "_" + str(self.ptCenter[1]) + '.png', img1, cmap='gray')
+        FileName = "Profile_" + self.caseID + self.ViewName[self.ViewMode] + '_' + self.SliceName[
+            self.SliceMode] + '_' + self.PhaseName[self.PhaseMode]
+        plt.imsave( FileName+ '.png', img1, cmap='gray')
 
 
 
