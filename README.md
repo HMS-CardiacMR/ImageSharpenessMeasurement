@@ -4,7 +4,8 @@
 The repository contains a source code for measuring image sharpenss. Image sharpeness is defined as the abosolute gradient of intensity profile extracted from normalized image.
 
 
-
+## Requirements
+numpy, pydicom, scipy, PyQt5, PIL, qimage2ndarray, matplotlib, cv2
 
 
 # Program Guideline
