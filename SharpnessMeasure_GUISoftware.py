@@ -1,7 +1,7 @@
 ######
-# Author : Siyeop Yoon
+# Author : ANNOYMIZED
 # Last Update : May 26, 2022
-# https://cardiacmr.hms.harvard.edu/
+# https://ANNOYMIZED/
 ######
 
 
